@@ -1,20 +1,27 @@
-Copyright (c) GitHub and others
+import { useState } from "react";
+import axios from "axios";
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+export default function Licenses() {
+  const [email, setEmail] = useState("");
+  const [duration, setDuration] = useState(1);
+  const [key, setKey] = useState("");
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+  const generateLicense = async () => {
+    const response = await axios.post("http://EA-HOSTER:1000/generate-key", { email, duration });
+    setKey(response.data.key);
+  };
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  return (
+    <div className="p-6">
+      <h1 className="text-xl font-bold">Generate a License Key</h1>
+      <input type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} className="border p-2" />
+      <select onChange={(e) => setDuration(e.target.value)} className="border p-2 ml-2">
+        <option value={1}>1 Month</option>
+        <option value={3}>3 Months</option>
+        <option value={6}>6 Months</option>
+      </select>
+      <button onClick={generateLicense} className="bg-blue-500 text-white p-2 ml-2">Generate</button>
+      {key && <p className="mt-4">Your License Key: <strong>{key}</strong></p>}
+    </div>
+  );
+}
